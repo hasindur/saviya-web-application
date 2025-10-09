@@ -19,8 +19,9 @@ export default function AdminDashboardFuturistic() {
                     axios.get("http://localhost:5000/api/donations") // fetch donations
                 ]);
 
-                setUsers(usersRes.data || []);
+
                 setHomes(homesRes.data || []);
+                setUsers(usersRes.data || []);
                 setDonations(donationsRes.data?.data || []); // real donation data
             } catch (err) {
                 console.error("Failed to fetch data:", err);
