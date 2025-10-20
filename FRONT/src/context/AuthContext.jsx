@@ -10,6 +10,7 @@ export const useAuth = () => {
     if (!context) {
         throw new Error('useAuth must be used within an AuthProvider');
     }
+
     return context;
 };
 
@@ -29,7 +30,7 @@ const isTokenExpired = (token) => {
     try {
         const decoded = decodeToken(token);
         if (!decoded || !decoded.exp) return true;
-        
+
         const currentTime = Date.now() / 1000;
         return decoded.exp < currentTime;
     } catch (error) {
@@ -50,7 +51,7 @@ export const AuthProvider = ({ children }) => {
     const initializeAuth = () => {
         try {
             const token = localStorage.getItem('token');
-            
+
             if (!token) {
                 setLoading(false);
                 return;
@@ -76,7 +77,7 @@ export const AuthProvider = ({ children }) => {
                     isEmailVerified: decoded.isEmailVerified
                 });
                 setIsAuthenticated(true);
-                
+
                 // Set default authorization header for axios
                 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             }
@@ -96,10 +97,10 @@ export const AuthProvider = ({ children }) => {
             });
 
             const { token } = response.data;
-            
+
             // Store token
             localStorage.setItem('token', token);
-            
+
             // Decode and set user info
             const decoded = decodeToken(token);
             if (decoded) {
@@ -111,22 +112,22 @@ export const AuthProvider = ({ children }) => {
                     isDisabled: decoded.isDisabled,
                     isEmailVerified: decoded.isEmailVerified
                 };
-                
+
                 setUser(userData);
                 setIsAuthenticated(true);
-                
+
                 // Set default authorization header
                 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-                
+
                 return { success: true, user: userData };
             }
-            
+
             throw new Error('Invalid token received');
         } catch (error) {
             console.error('Login error:', error);
-            return { 
-                success: false, 
-                message: error.response?.data?.message || error.message 
+            return {
+                success: false,
+                message: error.response?.data?.message || error.message
             };
         }
     };
@@ -134,14 +135,14 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         // Clear local storage
         localStorage.removeItem('token');
-        
+
         // Clear axios default headers
         delete axios.defaults.headers.common['Authorization'];
-        
+
         // Reset state
         setUser(null);
         setIsAuthenticated(false);
-        
+
         console.log('User logged out successfully');
     };
 
